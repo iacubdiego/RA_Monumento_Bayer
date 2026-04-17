@@ -104,6 +104,17 @@ monument-ar/
     └── placa_fixed.stl ← Placa "Osvaldo Bayer 1927–2018"
 ```
 
+pip install trimesh numpy
+
+# Conversión básica
+python3 convertir_a_gltf.py
+
+# Con Draco (necesitás Node.js)
+npm install -g gltf-pipeline
+python3 convertir_a_gltf.py --draco
+
+
+
 ---
 
 ## Créditos
