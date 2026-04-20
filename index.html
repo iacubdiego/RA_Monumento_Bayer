@@ -272,62 +272,6 @@
     }
     .btn-3d:active { border-color: var(--light); color: var(--white); }
 
-    /* ═══ AR TIPS MODAL ═════════════════════════════════ */
-    #tips-overlay {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(10,10,10,.97);
-      display: none;
-      flex-direction: column;
-      padding: 2rem 1.6rem;
-    }
-    #tips-overlay.show { display: flex; }
-
-    .tips-header {
-      display: flex; justify-content: space-between; align-items: flex-start;
-      margin-bottom: 1.6rem;
-    }
-    .tips-header h2 {
-      font-family: 'Oswald', sans-serif;
-      font-size: 1.3rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .06em;
-    }
-    .tips-header h2 span { color: var(--red); }
-    .tips-close {
-      background: none; border: none; color: var(--mid);
-      font-size: 1.4rem; cursor: pointer; line-height: 1;
-      padding: 0 .2rem;
-    }
-
-    .tips-list { flex: 1; display: flex; flex-direction: column; gap: 1rem; }
-
-    .tip-item {
-      display: flex; gap: .9rem; align-items: flex-start;
-    }
-    .tip-num {
-      flex-shrink: 0;
-      width: 1.6rem; height: 1.6rem;
-      background: var(--red);
-      color: var(--white);
-      font-family: 'Oswald', sans-serif;
-      font-size: .75rem; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .tip-text { font-size: .72rem; line-height: 1.65; color: var(--light); }
-    .tip-text strong { color: var(--white); }
-
-    .tips-btn {
-      margin-top: 1.8rem;
-      display: block; width: 100%;
-      background: var(--red); color: var(--white);
-      border: none;
-      padding: .95rem;
-      font-family: 'Oswald', sans-serif;
-      font-size: .9rem; letter-spacing: .1em;
-      text-transform: uppercase; font-weight: 600;
-      cursor: pointer;
-      -webkit-appearance: none;
-    }
-
     /* ═══ LOADING ════════════════════════════════════════ */
     #load-track {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -542,6 +486,38 @@
 
     .hidden { display: none !important; }
 
+    /* ═══ INSTRUCTIONS ══════════════════════════════════════ */
+    .instructions-block {
+      margin-bottom: 1.4rem;
+      opacity: 0;
+      animation: riseClip .45s 1.7s ease forwards;
+    }
+    .instructions-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--light);
+      margin-bottom: .7rem;
+    }
+    .instructions-title span { color: var(--red); }
+    .tip-item {
+      display: flex; gap: .7rem; align-items: flex-start;
+      margin-bottom: .55rem;
+    }
+    .tip-num {
+      flex-shrink: 0;
+      width: 1.3rem; height: 1.3rem;
+      background: var(--red);
+      color: var(--white);
+      font-family: 'Oswald', sans-serif;
+      font-size: .65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tip-text { font-size: .65rem; line-height: 1.6; color: var(--mid); }
+    .tip-text strong { color: var(--light); }
+
     /* ═══ CREDIT BLOCK ═════════════════════════════════════ */
     .credit-block {
       margin-top: 1.4rem;
@@ -599,37 +575,6 @@
 </head>
 <body>
 
-<!-- ═══ TIPS MODAL ════════════════════════════════════════ -->
-<div id="tips-overlay">
-  <div class="tips-header">
-    <h2>Cómo usar <span>la AR</span></h2>
-    <button class="tips-close" onclick="closeTips()">✕</button>
-  </div>
-  <div class="tips-list">
-    <div class="tip-item">
-      <div class="tip-num">1</div>
-      <div class="tip-text"><strong>Buena luz.</strong> Necesitás luz suficiente — exterior de día funciona mejor. Evitá superficies muy oscuras o brillantes.</div>
-    </div>
-    <div class="tip-item">
-      <div class="tip-num">2</div>
-      <div class="tip-text"><strong>Apuntá al piso con textura.</strong> Baldosas, cemento, pasto o tierra. El piso liso blanco o negro es difícil de detectar.</div>
-    </div>
-    <div class="tip-item">
-      <div class="tip-num">3</div>
-      <div class="tip-text"><strong>Incliná el teléfono ~30–45°</strong> mirando al piso, a unos 1–1.5m de distancia. Mové lentamente de lado a lado.</div>
-    </div>
-    <div class="tip-item">
-      <div class="tip-num">4</div>
-      <div class="tip-text"><strong>Esperá el anillo rojo.</strong> Aparece en pocos segundos cuando se detecta la superficie. Recién ahí tocás la pantalla.</div>
-    </div>
-    <div class="tip-item">
-      <div class="tip-num">5</div>
-      <div class="tip-text"><strong>Toque suave.</strong> Un solo tap. Las piezas van a caer en secuencia durante ~10 segundos.</div>
-    </div>
-  </div>
-  <button class="tips-btn" onclick="closeTipsAndLaunch()">Entendido — Iniciar AR</button>
-</div>
-
 <!-- ═══ SPLASH ════════════════════════════════════════════ -->
 <div id="splash">
   <div class="top-bar"></div>
@@ -665,7 +610,27 @@
       <p>El gobierno argentino destruyó este monumento el 25 de marzo de 2025. Esta experiencia es una reconstrucción digital.</p>
     </div>
 
-    <button class="btn-ar" onclick="showTips()">▶ &nbsp;Iniciar en Realidad Aumentada</button>
+    <div class="instructions-block">
+      <p class="instructions-title">Cómo usar <span>la AR</span></p>
+      <div class="tip-item">
+        <div class="tip-num">1</div>
+        <div class="tip-text"><strong>Buena luz.</strong> Exterior de día funciona mejor. Evitá pisos oscuros o muy brillantes.</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">2</div>
+        <div class="tip-text"><strong>Incliná el teléfono ~45°</strong> mirando al piso, a 1–1.5m. Mové lentamente de lado a lado.</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">3</div>
+        <div class="tip-text"><strong>Esperá el anillo rojo</strong> — indica que se detectó la superficie. Recién ahí tocás.</div>
+      </div>
+      <div class="tip-item">
+        <div class="tip-num">4</div>
+        <div class="tip-text"><strong>Un solo tap</strong> y las piezas caen en secuencia durante ~10 segundos.</div>
+      </div>
+    </div>
+
+    <button class="btn-ar" onclick="launchAR()">▶ &nbsp;Iniciar en Realidad Aumentada</button>
     <button class="btn-3d" onclick="init3D()">◻ &nbsp;Ver en 3D (sin cámara)</button>
 
     <div class="credit-block">
@@ -997,16 +962,8 @@ window.addEventListener('resize',()=>{
 </script>
 
 <script>
-// Tips modal controls (non-module scope for onclick)
-window.showTips = function(){ document.getElementById('tips-overlay').classList.add('show'); };
-window.closeTips = function(){ document.getElementById('tips-overlay').classList.remove('show'); };
-window.closeTipsAndLaunch = function(){
-  document.getElementById('tips-overlay').classList.remove('show');
-  window.launchAR();
-};
 window.goBack = function(){ location.reload(); };
 
-// Add pulse class to AR button after its entrance animation finishes
 setTimeout(() => {
   const btn = document.querySelector('.btn-ar');
   if (btn) btn.classList.add('ready');
