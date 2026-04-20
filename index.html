@@ -630,7 +630,7 @@
       </div>
     </div>
 
-    <button class="btn-ar" onclick="launchAR()">▶ &nbsp;Iniciar en Realidad Aumentada</button>
+    <button class="btn-ar" onclick="tryLaunchAR()">▶ &nbsp;Iniciar en Realidad Aumentada</button>
     <button class="btn-3d" onclick="init3D()">◻ &nbsp;Ver en 3D (sin cámara)</button>
 
     <div class="credit-block">
@@ -768,10 +768,12 @@ document.getElementById('load-label').style.display = 'block';
 
 PARTS.forEach((part, i) => {
   loader.load(part.file, (geo) => {
-    geo.computeBoundingBox();
-    geo.center();
-    geo.scale(S,S,S);
-    geo.computeVertexNormals();
+    const geometry = geo.clone(); // clone ensures attributes are writable
+    geometry.computeBoundingBox();
+    geometry.center();
+    geometry.scale(S,S,S);
+    geometry.computeVertexNormals();
+    geo = geometry;
 
     const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
       color: part.color,
@@ -963,6 +965,22 @@ window.addEventListener('resize',()=>{
 
 <script>
 window.goBack = function(){ location.reload(); };
+
+// Wrapper defensivo: espera a que el módulo ES termine de cargar
+window.tryLaunchAR = function() {
+  if (typeof window.launchAR === 'function') {
+    window.launchAR();
+  } else {
+    const btn = document.querySelector('.btn-ar');
+    if (btn) { btn.textContent = 'Cargando…'; btn.disabled = true; }
+    const poll = setInterval(() => {
+      if (typeof window.launchAR === 'function') {
+        clearInterval(poll);
+        window.launchAR();
+      }
+    }, 200);
+  }
+};
 
 setTimeout(() => {
   const btn = document.querySelector('.btn-ar');
