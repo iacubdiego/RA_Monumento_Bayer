@@ -630,7 +630,7 @@
       </div>
     </div>
 
-    <button class="btn-ar" onclick="tryLaunchAR()">▶ &nbsp;Iniciar en Realidad Aumentada</button>
+    <button class="btn-ar" onclick="launchAR()">▶ &nbsp;Iniciar en Realidad Aumentada</button>
     <button class="btn-3d" onclick="init3D()">◻ &nbsp;Ver en 3D (sin cámara)</button>
 
     <div class="credit-block">
@@ -768,12 +768,10 @@ document.getElementById('load-label').style.display = 'block';
 
 PARTS.forEach((part, i) => {
   loader.load(part.file, (geo) => {
-    const geometry = geo.clone(); // clone ensures attributes are writable
-    geometry.computeBoundingBox();
-    geometry.center();
-    geometry.scale(S,S,S);
-    geometry.computeVertexNormals();
-    geo = geometry;
+    geo.computeBoundingBox();
+    geo.center();
+    geo.scale(S,S,S);
+    geo.computeVertexNormals();
 
     const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
       color: part.color,
@@ -887,72 +885,37 @@ renderer.setAnimationLoop((time,frame)=>{
 
 // ── AR Mode ────────────────────────────────────────────
 window.launchAR = function(){
-  const btn = document.querySelector('.btn-ar');
-  const resetBtn = () => {
-    if (btn) { btn.textContent = '▶ \u00a0Iniciar en Realidad Aumentada'; btn.disabled = false; }
-  };
-
   if(!navigator.xr){
-    resetBtn();
-    alert('WebXR no disponible.\nUsá Chrome en Android o Safari en iOS 16+.');
-    return;
+    alert('WebXR no disponible.\nUsá Chrome en Android o Safari en iOS 16+.'); return;
   }
+  // requestSession must be called synchronously from user gesture
+  navigator.xr.requestSession('immersive-ar',{
+    requiredFeatures:['hit-test','local'],
+    optionalFeatures:['dom-overlay','local-floor'],
+    domOverlay:{root:document.body},
+  }).then(async (session) => {
+    await renderer.xr.setSession(session);
 
-  // Intentar con hit-test primero, si falla sin él
-  const trySession = (withHitTest) => {
-    const required = withHitTest ? ['hit-test','local'] : ['local'];
-    navigator.xr.requestSession('immersive-ar',{
-      requiredFeatures: required,
-      optionalFeatures: withHitTest ? ['dom-overlay','local-floor'] : ['hit-test','dom-overlay','local-floor'],
-      domOverlay:{root:document.body},
-    }).then(async (session) => {
-      await renderer.xr.setSession(session);
+    const viewerSpace=await session.requestReferenceSpace('viewer');
+    hitTestSource=await session.requestHitTestSource({space:viewerSpace});
 
-      // Intentar hit-test solo si está disponible
-      try {
-        const viewerSpace = await session.requestReferenceSpace('viewer');
-        hitTestSource = await session.requestHitTestSource({space:viewerSpace});
-      } catch(e) {
-        hitTestSource = null; // seguir sin hit-test
-      }
+    document.getElementById('splash').classList.add('hidden');
+    document.getElementById('ar-ui').style.display='block';
+    document.getElementById('btn-back').style.display='block';
 
-      document.getElementById('splash').classList.add('hidden');
-      document.getElementById('ar-ui').style.display='block';
-      document.getElementById('btn-back').style.display='block';
-
-      session.addEventListener('select',()=>{
-        if(isPlaced) return;
-        isPlaced=true; reticle.visible=false;
-        document.getElementById('scan-hint').style.display='none';
-        // Si no hay hit-test, colocar a 1.5m frente a la cámara
-        if(hitTestSource && reticle.visible){
-          monument.position.setFromMatrixPosition(reticle.matrix);
-        } else {
-          monument.position.set(0, -1, -1.5);
-          // orientar hacia cámara
-          const dir = new THREE.Vector3();
-          camera.getWorldDirection(dir);
-          monument.position.addScaledVector(dir, 1.5);
-          monument.position.y -= 0.5;
-        }
-        monument.visible=true;
-        beginAssembly();
-      });
-      session.addEventListener('end',()=>{ hitTestSource=null; isPlaced=false; });
-
-    }).catch(e=>{
-      if(withHitTest){
-        // Reintentar sin hit-test
-        trySession(false);
-      } else {
-        resetBtn();
-        alert('AR no disponible en este dispositivo.\n\n'+
-              (e.message||e)+'\n\nUsá "Ver en 3D".');
-      }
+    session.addEventListener('select',()=>{
+      if(isPlaced||!reticle.visible)return;
+      isPlaced=true; reticle.visible=false;
+      document.getElementById('scan-hint').style.display='none';
+      monument.position.setFromMatrixPosition(reticle.matrix);
+      monument.visible=true;
+      beginAssembly();
     });
-  };
+    session.addEventListener('end',()=>{ hitTestSource=null; isPlaced=false; });
 
-  trySession(true);
+  }).catch(e=>{
+    alert('Error al iniciar AR: '+(e.message||e)+'\n\nProbá "Ver en 3D".');
+  });
 };
 
 // ── 3D Fallback ────────────────────────────────────────
@@ -1000,30 +963,6 @@ window.addEventListener('resize',()=>{
 
 <script>
 window.goBack = function(){ location.reload(); };
-
-window.tryLaunchAR = function() {
-  const btn = document.querySelector('.btn-ar');
-  if (typeof window.launchAR === 'function') {
-    window.launchAR();
-  } else {
-    // Módulo todavía cargando — mostrar feedback sin deshabilitar
-    if (btn) btn.textContent = 'Cargando Three.js…';
-    let attempts = 0;
-    const poll = setInterval(() => {
-      attempts++;
-      if (typeof window.launchAR === 'function') {
-        clearInterval(poll);
-        if (btn) btn.textContent = '▶ \u00a0Iniciar en Realidad Aumentada';
-        window.launchAR();
-      } else if (attempts > 30) {
-        // 6 segundos sin respuesta
-        clearInterval(poll);
-        if (btn) { btn.textContent = '▶ \u00a0Iniciar en Realidad Aumentada'; btn.disabled = false; }
-        alert('Error cargando la librería 3D.\nVerificá tu conexión e intentá de nuevo.');
-      }
-    }, 200);
-  }
-};
 
 setTimeout(() => {
   const btn = document.querySelector('.btn-ar');
