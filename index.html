@@ -229,8 +229,8 @@ const PARTS = [
     color: 0x1E1E1E,
     roughness: 0.75,
     rotation: new THREE.Euler(-Math.PI/2, 0, 0),
-    finalPos: new THREE.Vector3(0.002, PT + 0.076, -0.019),
-    startPos:  new THREE.Vector3(0.002, 1.9, -0.019),
+    finalPos: new THREE.Vector3(0.0004, PT + 0.076, -0.005),
+    startPos:  new THREE.Vector3(0.0004, 1.9, -0.005),
     delay: 2200,
     duration: 1200,
   },
@@ -241,8 +241,8 @@ const PARTS = [
     color: 0xF0EDE8,
     roughness: 0.55,
     rotation: new THREE.Euler(0, 0, 0),
-    finalPos: new THREE.Vector3(0.002, PT + 0.076, 0.016),
-    startPos:  new THREE.Vector3(0.002, 1.9, 0.016),
+    finalPos: new THREE.Vector3(0.0004, PT + 0.076, 0.030),
+    startPos:  new THREE.Vector3(0.0004, 1.9, 0.030),
     delay: 4000,
     duration: 1100,
   },
@@ -253,8 +253,8 @@ const PARTS = [
     color: 0x111111,
     roughness: 0.50,
     rotation: new THREE.Euler(0, 0, 0),
-    finalPos: new THREE.Vector3(-0.068, PT + 0.272, -0.014),
-    startPos:  new THREE.Vector3(-0.068, 2.1, -0.014),
+    finalPos: new THREE.Vector3(-0.069, PT + 0.272, 0.000),
+    startPos:  new THREE.Vector3(-0.069, 2.1, 0.000),
     delay: 5600,
     duration: 1100,
   },
@@ -265,8 +265,8 @@ const PARTS = [
     color: 0xBBB7AF,
     roughness: 0.88,
     rotation: new THREE.Euler(-Math.PI/2, 0, 0),
-    finalPos: new THREE.Vector3(0.20, PT + 0.120, -0.019),
-    startPos:  new THREE.Vector3(0.20, 2.1, -0.019),
+    finalPos: new THREE.Vector3(0.190, PT + 0.120, -0.070),
+    startPos:  new THREE.Vector3(0.190, 2.1, -0.070),
     delay: 7000,
     duration: 1250,
   },
@@ -300,6 +300,7 @@ fill.position.set(-2, 3, 2);
 scene.add(fill);
 
 const monument = new THREE.Group();
+monument.rotation.y = -0.3072;  // aligned with piso encastre slot (17.6°)
 monument.visible = false;
 scene.add(monument);
 
