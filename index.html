@@ -300,6 +300,7 @@ fill.position.set(-2, 3, 2);
 scene.add(fill);
 
 const monument = new THREE.Group();
+window._monument = monument;
 monument.rotation.y = -0.3072;  // aligned with piso encastre slot (17.6°)
 monument.visible = false;
 scene.add(monument);
@@ -327,6 +328,8 @@ reticle.add(innerDot);
 
 const loader = new STLLoader();
 const meshes = new Array(PARTS.length).fill(null);
+window._meshes = meshes;
+window._PARTS = PARTS;
 let loadedCount = 0;
 
 document.getElementById('load-track').style.display = 'block';
