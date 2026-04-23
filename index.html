@@ -229,8 +229,8 @@ const PARTS = [
     color: 0x1E1E1E,
     roughness: 0.75,
     rotation: new THREE.Euler(-Math.PI/2, 0, 0),
-    finalPos: new THREE.Vector3(-0.060, PT + 0.076, -0.005),
-    startPos:  new THREE.Vector3(-0.060, 1.9, -0.005),
+    finalPos: new THREE.Vector3(-0.02, PT + 0.076, 0.005),
+    startPos:  new THREE.Vector3(-0.02, 1.9, 0.005),
     delay: 2200,
     duration: 1200,
   },
@@ -241,8 +241,8 @@ const PARTS = [
     color: 0xF0EDE8,
     roughness: 0.55,
     rotation: new THREE.Euler(0, 0, 0),
-    finalPos: new THREE.Vector3(-0.060, PT + 0.076, 0.029),
-    startPos:  new THREE.Vector3(-0.060, 1.9, 0.029),
+    finalPos: new THREE.Vector3(-0.02, PT + 0.076, 0.040),
+    startPos:  new THREE.Vector3(-0.02, 1.9, 0.040),
     delay: 4000,
     duration: 1100,
   },
@@ -253,8 +253,8 @@ const PARTS = [
     color: 0x111111,
     roughness: 0.50,
     rotation: new THREE.Euler(0, 0, 0),
-    finalPos: new THREE.Vector3(-0.124, PT + 0.272, 0.028),
-    startPos:  new THREE.Vector3(-0.124, 2.1, 0.028),
+    finalPos: new THREE.Vector3(-0.08, PT + 0.160, 0.022),
+    startPos:  new THREE.Vector3(-0.08, 2.1, 0.022),
     delay: 5600,
     duration: 1100,
   },
@@ -265,8 +265,8 @@ const PARTS = [
     color: 0xBBB7AF,
     roughness: 0.88,
     rotation: new THREE.Euler(-Math.PI/2, 0, 0),
-    finalPos: new THREE.Vector3(0.210, PT + 0.120, -0.005),
-    startPos:  new THREE.Vector3(0.210, 2.1, -0.005),
+    finalPos: new THREE.Vector3(0.20, PT + 0.120, 0.010),
+    startPos:  new THREE.Vector3(0.20, 2.1, 0.010),
     delay: 7000,
     duration: 1250,
   },
@@ -301,7 +301,6 @@ scene.add(fill);
 
 const monument = new THREE.Group();
 window._monument = monument;
-monument.rotation.y = -0.3065;  // aligned with piso encastre slot (17.56°)
 monument.visible = false;
 scene.add(monument);
 
@@ -436,7 +435,7 @@ function onComplete() {
   document.getElementById('hud-fill').style.width = '100%';
   const card = document.getElementById('done-card');
   card.style.display = 'block';
-  monument.userData.autoRotate = true;
+  // assembly complete — no auto-rotation
 }
 
 let hitTestSource = null;
@@ -451,9 +450,6 @@ renderer.setAnimationLoop((time, frame) => {
     innerDot.material.opacity = .15 + Math.sin(time * .004) * .1;
     const s = 1 + Math.sin(time * .004) * .07;
     innerDot.scale.set(s, 1, s);
-  }
-  if (monument.userData.autoRotate) {
-    monument.rotation.y += 0.004;
   }
   if (frame && hitTestSource) {
     const ref = renderer.xr.getReferenceSpace();
@@ -546,10 +542,6 @@ window.init3D = function() {
     for (let i = activeAnims.length - 1; i >= 0; i--) {
       activeAnims[i].tick(time);
       if (activeAnims[i].done) activeAnims.splice(i, 1);
-    }
-    if (monument.userData.autoRotate) {
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.8;
     }
     renderer.render(scene, camera);
   });
